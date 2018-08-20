@@ -4,4 +4,4 @@ ADD RdfDatatypeDetection.py /
 
 RUN pip install rdflib
 
-CMD [ "python", "./RdfDatatypeDetection.py" ]
+ENTRYPOINT [ "python", "./RdfDatatypeDetection.py" ]

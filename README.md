@@ -10,5 +10,5 @@ docker build -t rdf-datatype-detection .
 ## Run
 
 ```shell
-docker run -v -it --rm c:/data/rdf-datatype-detection:/data rdf-datatype-detection -i /data/input.nq
+docker run -it --rm -v c:/data/rdf-datatype-detection:/data rdf-datatype-detection -i input.nq
 ```

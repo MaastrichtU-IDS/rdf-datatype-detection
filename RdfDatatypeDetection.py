@@ -1,36 +1,43 @@
 from rdflib import ConjunctiveGraph, Literal, XSD,Graph
-from textblob import TextBlob
-from langdetect import  detect
 import re
 import sys, getopt
+
+#from textblob import TextBlob
+#from langdetect import  detect
 
 
 #detect datatypes :string, date, boolean(case insensitive), float
 
 
 def main(argv):
-    inputfile = ''
+    workdir="/data/"
+    inputfile=''
+    outputfile="output.nq"
+
     try:
-      opts, args = getopt.getopt(argv,"hi:o:",["ifile=","ofile="])
+      opts, args = getopt.getopt(argv,"hi:o:",["inputfile="])
     except getopt.GetoptError:
-      print ('test.py -i <inputfile> -o <outputfile>')
+      print ('test.py --inputfile <inputfile>')
       sys.exit(2)
     for opt, arg in opts:
-      if opt in ("-i", "--ifile"):
+      if opt in ("-i", "--inputfile"):
          inputfile = arg
     # print ('Input file is "', inputfile)
     inputdata=inputfile.split('.')
+    # TODO: change all this to take the absolute full path as arg (e.g.: /data/input.nq)
+    input_full_path=workdir + inputfile
+
     data=inputdata[0]
     datatype=inputdata[1]
     if(datatype == "nq"):
         g = ConjunctiveGraph(identifier="http://kraken/graph/data/"+ data)
-        g.default_context.parse('C:\\Users\DELL\\PycharmProjects\\OntologyTopic\\'+inputfile, format='nquads')
+        g.default_context.parse(input_full_path, format='nquads')
     else:
         g = Graph() #for n3
         if datatype == "nt":
-            g.default_context.parse('C:\\Users\DELL\\PycharmProjects\\OntologyTopic\\'+inputfile,format='nt')
+            g.default_context.parse(input_full_path,format='nt')
         elif datatype == "ttl":
-            g.default_context.parse('C:\\Users\DELL\\PycharmProjects\\OntologyTopic\\'+inputfile,format='n3')
+            g.default_context.parse(input_full_path,format='n3')
 
     patternstring1 = re.compile("^([A-Z]|[a-z]+)+$")
     patternstring = re.compile("\w+")
@@ -61,11 +68,11 @@ def main(argv):
                 g.remove((s, p, o))
                 g.add((s, p, Literal(o, datatype=XSD.string)))
     if(datatype == "nq"):
-        g.serialize(destination='C:\\Users\DELL\\PycharmProjects\\OntologyTopic\\' + inputfile, format='nquads')
+        g.serialize(destination=workdir + outputfile, format='nquads')
     elif datatype == "nt":
-        g.serialize(destination='C:\\Users\DELL\\PycharmProjects\\OntologyTopic\\' + inputfile, format='nt')
+        g.serialize(destination=workdir + outputfile, format='nt')
     elif datatype == "ttl":
-        g.default_context.parse('C:\\Users\DELL\\PycharmProjects\\OntologyTopic\\'+inputfile,format='n3')
+        g.default_context.parse(workdir + outputfile,format='n3')
 
 if __name__ == "__main__":
     main(sys.argv[1:])
